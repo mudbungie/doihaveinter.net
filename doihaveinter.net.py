@@ -11,7 +11,7 @@ def index():
 def ip():
 	return request.environ['HTTP_X_REAL_IP']
 
-@route('/ip')
+@route('/IP')
 def ip():
 	return '{}\n'.format(request.environ['HTTP_X_REAL_IP'])
 

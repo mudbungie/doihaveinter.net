@@ -11,4 +11,8 @@ def index():
 def ip():
 	return request.environ['HTTP_X_REAL_IP']
 
+@route('/ip')
+def ip():
+	return '{}\n'.format(request.environ['HTTP_X_REAL_IP'])
+
 run(host='127.0.0.1', port=8000)

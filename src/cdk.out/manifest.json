@@ -1,0 +1,68 @@
+{
+  "version": "9.0.0",
+  "artifacts": {
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    },
+    "CdkStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "CdkStack.template.json"
+      },
+      "metadata": {
+        "/CdkStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata",
+            "trace": [
+              "new MetadataResource (/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/private/metadata-resource.js:22:30)",
+              "/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/private/synthesis.js:128:9",
+              "visit (/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/private/synthesis.js:184:9)",
+              "visit (/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/private/synthesis.js:181:9)",
+              "injectMetadataResources (/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/private/synthesis.js:117:5)",
+              "Object.synthesize (/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/private/synthesis.js:17:5)",
+              "App.synth (/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/stage.js:100:41)",
+              "/tmp/tmpwt2xysx2/lib/program.js:7970:134",
+              "Kernel._wrapSandboxCode (/tmp/tmpwt2xysx2/lib/program.js:8582:24)",
+              "/tmp/tmpwt2xysx2/lib/program.js:7970:107",
+              "Kernel._ensureSync (/tmp/tmpwt2xysx2/lib/program.js:8563:28)",
+              "Kernel.invoke (/tmp/tmpwt2xysx2/lib/program.js:7970:34)",
+              "KernelHost.processRequest (/tmp/tmpwt2xysx2/lib/program.js:9479:36)",
+              "KernelHost.run (/tmp/tmpwt2xysx2/lib/program.js:9442:22)",
+              "Immediate._onImmediate (/tmp/tmpwt2xysx2/lib/program.js:9443:46)",
+              "processImmediate (internal/timers.js:461:21)"
+            ]
+          }
+        ],
+        "/CdkStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable",
+            "trace": [
+              "new MetadataResource (/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/private/metadata-resource.js:30:35)",
+              "/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/private/synthesis.js:128:9",
+              "visit (/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/private/synthesis.js:184:9)",
+              "visit (/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/private/synthesis.js:181:9)",
+              "injectMetadataResources (/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/private/synthesis.js:117:5)",
+              "Object.synthesize (/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/private/synthesis.js:17:5)",
+              "App.synth (/tmp/jsii-kernel-XVDaXl/node_modules/@aws-cdk/core/lib/stage.js:100:41)",
+              "/tmp/tmpwt2xysx2/lib/program.js:7970:134",
+              "Kernel._wrapSandboxCode (/tmp/tmpwt2xysx2/lib/program.js:8582:24)",
+              "/tmp/tmpwt2xysx2/lib/program.js:7970:107",
+              "Kernel._ensureSync (/tmp/tmpwt2xysx2/lib/program.js:8563:28)",
+              "Kernel.invoke (/tmp/tmpwt2xysx2/lib/program.js:7970:34)",
+              "KernelHost.processRequest (/tmp/tmpwt2xysx2/lib/program.js:9479:36)",
+              "KernelHost.run (/tmp/tmpwt2xysx2/lib/program.js:9442:22)",
+              "Immediate._onImmediate (/tmp/tmpwt2xysx2/lib/program.js:9443:46)",
+              "processImmediate (internal/timers.js:461:21)"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

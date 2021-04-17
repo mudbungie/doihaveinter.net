@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "doihaveinternet"
+version = "0.1.0"
+description = "simple website, simple answer"
+authors = ["mudbungie <mudbungie@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+boto3 = "^1.17.50"
+"aws-cdk.core" = "^1.98.0"
+"aws-cdk.aws-s3" = "^1.98.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

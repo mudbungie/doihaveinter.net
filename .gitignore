@@ -2,12 +2,13 @@
 oci_config.sh
 
 # Terraform
-.terraform/
-*.tfstate
-*.tfstate.*
-.terraform.lock.hcl
-terraform.tfvars
-crash.log
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/.terraform.lock.hcl
+terraform/terraform.tfvars
+terraform/crash.log
+
 
 # Python
 __pycache__/

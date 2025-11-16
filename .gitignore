@@ -1,0 +1,31 @@
+# Secrets
+oci_config.sh
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+terraform.tfvars
+crash.log
+
+# Python
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Burn
+trash/

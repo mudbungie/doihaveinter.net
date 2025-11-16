@@ -39,7 +39,7 @@ def get_caller_ip(data):
         return {"error": f"Failed to process request: {str(e)}"}
 
 
-def handler(ctx, data: io.BytesIO = None):
+def handler(ctx, data: io.BytesIO):
     """
     OCI Function handler entry point.
     """

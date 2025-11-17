@@ -1,7 +1,5 @@
 .PHONY: test clean build run test-container tf-init tf-plan tf-apply push help
 
-test:
-	python3 test/test_get_ip.py
 
 build:
 	docker build -t get-ip:latest .
@@ -13,6 +11,9 @@ push:
 
 run:
 	docker run --rm -p 8080:8080 get-ip:latest
+
+test:
+	python3 test/test_get_ip.py
 
 test-container:
 	@echo "Testing container endpoints..."

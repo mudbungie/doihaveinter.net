@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
+import datetime
 
 app = Flask(__name__)
 
 
-def get_ip_from_request():
+def get_ip_from_request() -> str:
     """Extract IP address from request headers."""
     # Try various headers for IP address (in order of preference)
 
@@ -11,6 +12,7 @@ def get_ip_from_request():
         request.headers.get('X-Forwarded-For', '').split(',')[0].strip() or
         request.headers.get('X-Real-IP') or
         request.remote_addr
+        or 'Unknown'
     )
     
     return ip
@@ -40,8 +42,22 @@ def health():
 
 @app.route('/', methods=['GET'])
 def root():
-    """Root endpoint."""
-    return jsonify({"message": "IP address service", "endpoints": ["/ip", "/health"]})
+    """Returns a simple html string that includes the current time and the word YES."""
+    html = f"""<html>
+<head>
+<title>Do I have Internet?</title>
+</head>
+<body>
+<h1>Yes</h1>
+as of {datetime.datetime.now().isoformat()} UTC
+from IP: {get_ip_from_request()}
+<br><br>
+Use /ip to get just your IP address, /IP for that and an endline, or /ip.json for JSON format.
+<br><br>
+</body>
+</html>
+"""
+    return html
 
 
 if __name__ == '__main__':

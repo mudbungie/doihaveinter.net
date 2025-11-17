@@ -27,7 +27,6 @@ class TestGetIP(unittest.TestCase):
         response = self.app.get('/IP')
         self.assertEqual(response.status_code, 200)
         data = response.text
-        print(data)
         self.assertTrue(data.endswith('\n'))
 
     def test_get_ip_json_endpoint(self):
@@ -77,9 +76,8 @@ class TestGetIP(unittest.TestCase):
         """Test the root endpoint."""
         response = self.app.get('/')
         self.assertEqual(response.status_code, 200)
-        data = response.get_json()
-        self.assertIn('message', data)
-        self.assertIn('endpoints', data)
+        data = response.text
+        self.assertIn("Internet", data)
 
 
 if __name__ == "__main__":

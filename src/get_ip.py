@@ -1,47 +1,32 @@
-import io
-import json
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
 
 
-def get_caller_ip(data):
-    """
-    Extract the caller's IP address from OCI Function context.
+@app.route('/ip', methods=['GET', 'POST', 'HEAD'])
+def get_ip():
+    """Return the caller's IP address."""
+    # Try various headers for IP address (in order of preference)
+    ip = (
+        request.headers.get('X-Forwarded-For', '').split(',')[0].strip() or
+        request.headers.get('X-Real-IP') or
+        request.remote_addr
+    )
     
-    The context data comes from the API Gateway which includes
-    the requestContext with the caller's IP in the 'identity' section.
-    """
-    try:
-        # Parse the input data
-        if isinstance(data, (bytes, bytearray)):
-            body = json.loads(data)
-        elif isinstance(data, io.BytesIO):
-            body = json.loads(data.getvalue())
-        elif isinstance(data, str):
-            body = json.loads(data)
-        elif isinstance(data, dict):
-            body = data
-        else:
-            return {"error": "Invalid input format"}
-        
-        print(body) # Debugging: print the body to verify structure #DELETEME
-
-        # Extract IP from the request context
-        # OCI API Gateway provides the client IP in requestContext.identity.sourceIp
-        ip_address = body.get("requestContext", {}).get("identity", {}).get("sourceIp")
-        
-        if ip_address:
-            return {"ip": ip_address}
-        else:
-            return {"error": "IP address not found in request context"}
-            
-    except json.JSONDecodeError:
-        return {"error": "Invalid JSON payload"}
-    except Exception as e:
-        return {"error": f"Failed to process request: {str(e)}"}
+    return jsonify({"ip": ip})
 
 
-def handler(ctx, data: io.BytesIO):
-    """
-    OCI Function handler entry point.
-    """
-    result = get_caller_ip(data)
-    return result
+@app.route('/health', methods=['GET'])
+def health():
+    """Health check endpoint."""
+    return jsonify({"status": "ok"})
+
+
+@app.route('/', methods=['GET'])
+def root():
+    """Root endpoint."""
+    return jsonify({"message": "IP address service", "endpoints": ["/ip", "/health"]})
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)

@@ -1,15 +1,15 @@
 FROM python:3.11-slim
 
-WORKDIR /function
+WORKDIR /app
 
-# Copy function code
-COPY src/get_ip.py /function/func.py
+# Install Flask
+RUN pip install --no-cache-dir flask gunicorn
 
-# Set the function entrypoint
-ENV PYTHONUNBUFFERED=1
+# Copy application code
+COPY src/get_ip.py /app/app.py
 
-# OCI Functions expects the handler at func.handler
-CMD ["python3", "-c", "from fdk import response; import func; response.RawResponse(ctx=None, response_data=func.handler(None, None), headers={}, status_code=200)"]
+# Expose port
+EXPOSE 8080
 
-# For OCI Functions Python FDK
-RUN pip install --no-cache-dir fdk
+# Use gunicorn for production
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--timeout", "30", "app:app"]

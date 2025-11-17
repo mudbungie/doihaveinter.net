@@ -40,11 +40,11 @@ resource "oci_core_route_table" "public" {
   }
 }
 
-# Security List
-resource "oci_core_security_list" "public" {
+# Security List for Container Instance
+resource "oci_core_security_list" "container" {
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.main.id
-  display_name   = "public-security-list"
+  display_name   = "container-security-list"
 
   egress_security_rules {
     protocol    = "all"
@@ -55,8 +55,8 @@ resource "oci_core_security_list" "public" {
     protocol = "6"
     source   = "0.0.0.0/0"
     tcp_options {
-      min = 443
-      max = 443
+      min = 8080
+      max = 8080
     }
   }
 
@@ -70,87 +70,99 @@ resource "oci_core_security_list" "public" {
   }
 }
 
-# Public Subnet
-resource "oci_core_subnet" "public" {
+# Public Subnet for Container
+resource "oci_core_subnet" "container" {
   compartment_id    = var.compartment_id
   vcn_id            = oci_core_vcn.main.id
-  cidr_block        = "10.0.1.0/24"
-  display_name      = "public-subnet"
-  dns_label         = "public"
+  cidr_block        = "10.0.2.0/24"
+  display_name      = "container-subnet"
+  dns_label         = "container"
   route_table_id    = oci_core_route_table.public.id
-  security_list_ids = [oci_core_security_list.public.id]
+  security_list_ids = [oci_core_security_list.container.id]
 }
 
-# Log Group for Functions (existing)
-resource "oci_logging_log_group" "functions" {
+# Log Group
+resource "oci_logging_log_group" "container" {
   compartment_id = var.compartment_id
-  display_name   = "ip-service"
-  description    = "Log group for get-ip function"
+  display_name   = "get-ip-container-logs"
+  description    = "Log group for get-ip container instance"
 }
 
+# Container Instance
+resource "oci_container_instances_container_instance" "get_ip" {
+  compartment_id         = var.compartment_id
+  display_name           = "get-ip-instance"
+  availability_domain    = var.availability_domain
+  shape                  = "CI.Standard.E4.Flex"
+  shape_config {
+    ocpus         = 1
+    memory_in_gbs = 4
+  }
 
-# Functions Application
-resource "oci_functions_application" "main" {
-  compartment_id = var.compartment_id
-  display_name   = "ip-service-app"
-  subnet_ids     = [oci_core_subnet.public.id]
+  vnics {
+    subnet_id             = oci_core_subnet.container.id
+    display_name          = "get-ip-vnic"
+    is_public_ip_assigned = true
+  }
 
-  config = {}
-
-  syslog_url = ""
-}
-
-# Function
-resource "oci_functions_function" "get_ip" {
-  application_id     = oci_functions_application.main.id
-  display_name       = "get-ip"
-  image              = var.function_image
-  memory_in_mbs      = 256
-  timeout_in_seconds = 30
-
-  depends_on = [oci_functions_application.main]
-}
-
-# API Gateway
-resource "oci_apigateway_gateway" "main" {
-  compartment_id = var.compartment_id
-  endpoint_type  = "PUBLIC"
-  subnet_id      = oci_core_subnet.public.id
-  display_name   = "ip-service-gateway"
-}
-
-# API Gateway Deployment
-resource "oci_apigateway_deployment" "main" {
-  compartment_id = var.compartment_id
-  gateway_id     = oci_apigateway_gateway.main.id
-  path_prefix    = "/"
-  display_name   = "ip-service-deployment"
-
-  specification {
-    routes {
-      path    = "/ip"
-      methods = ["GET", "POST", "HEAD"]
-
-      backend {
-        type        = "ORACLE_FUNCTIONS_BACKEND"
-        function_id = oci_functions_function.get_ip.id
-      }
-    }
-
-    routes {
-      path    = "/health"
-      methods = ["GET"]
-
-      backend {
-        type   = "STOCK_RESPONSE_BACKEND"
-        status = 200
-        body   = jsonencode({ status = "ok" })
-        
-        headers {
-          name  = "Content-Type"
-          value = "application/json"
-        }
-      }
+  containers {
+    display_name = "get-ip"
+    image_url    = var.container_image
+    
+    environment_variables = {
+      "APP_ENV" = "production"
     }
   }
+
+  image_pull_secrets {
+    secret_type = "BASIC"
+    registry_endpoint = "sjc.ocir.io"
+    username = "YXhrYWVoYzRycXdpL0RlZmF1bHQvb3Jpb25yaXZlckBnbWFpbC5jb20="
+    password = var.ocir_auth_token
+  }
+
+  container_restart_policy = "ALWAYS"
+}
+
+# Network Load Balancer
+resource "oci_network_load_balancer_network_load_balancer" "main" {
+  compartment_id = var.compartment_id
+  display_name   = "get-ip-nlb"
+  subnet_id      = oci_core_subnet.container.id
+  
+  is_private                     = false
+  is_preserve_source_destination = false
+}
+
+# Backend Set
+resource "oci_network_load_balancer_backend_set" "main" {
+  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.main.id
+  name                     = "get-ip-backend"
+  policy                   = "FIVE_TUPLE"
+  
+  health_checker {
+    protocol = "TCP"
+    port     = 8080
+  }
+}
+
+# Backend (Container Instance)
+resource "oci_network_load_balancer_backend" "container" {
+  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.main.id
+  backend_set_name         = oci_network_load_balancer_backend_set.main.name
+  
+  ip_address = oci_container_instances_container_instance.get_ip.vnics[0].private_ip
+  port       = 8080
+  is_backup  = false
+  is_drain   = false
+  is_offline = false
+}
+
+# Listener
+resource "oci_network_load_balancer_listener" "main" {
+  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.main.id
+  name                     = "get-ip-listener"
+  default_backend_set_name = oci_network_load_balancer_backend_set.main.name
+  port                     = 80
+  protocol                 = "TCP"
 }

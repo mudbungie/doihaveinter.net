@@ -21,6 +21,11 @@ def get_ip():
     """Return just the IP address"""
     return get_ip_from_request()
 
+@app.route('/IP', methods=['GET', 'POST', 'HEAD'])
+def get_ip_upper():
+    """Return just the IP address with endline"""
+    return get_ip_from_request() + '\n'
+
 @app.route('/ip.json', methods=['GET', 'POST', 'HEAD'])
 def get_ip_json():
     """Return the IP address in JSON format."""

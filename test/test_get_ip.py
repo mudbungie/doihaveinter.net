@@ -22,6 +22,14 @@ class TestGetIP(unittest.TestCase):
         data = response.text
         self.assertIn('.', data)
 
+    def test_ip_with_endline_endpoint(self):
+        """Test the /ip endpoint returns an IP with endline."""
+        response = self.app.get('/IP')
+        self.assertEqual(response.status_code, 200)
+        data = response.text
+        print(data)
+        self.assertTrue(data.endswith('\n'))
+
     def test_get_ip_json_endpoint(self):
         """Test the /ip endpoint returns an IP."""
         response = self.app.get('/ip.json')

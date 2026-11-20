@@ -10,7 +10,7 @@ variable "region" {
 }
 
 variable "availability_domain" {
-  description = "Availability domain for container instance"
+  description = "Availability domain for the VM"
   type        = string
 }
 

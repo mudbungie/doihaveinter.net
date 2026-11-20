@@ -37,7 +37,7 @@ tf-apply:
 	cd terraform && terraform apply
 
 tf-apply-update:
-	cd terraform && terraform apply --replace="oci_container_instances_container_instance.get_ip" --auto-approve
+	cd terraform && terraform apply --replace="oci_core_instance.get_ip" --auto-approve
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true

@@ -13,9 +13,9 @@ output "health_check_url" {
   value       = "http://${oci_network_load_balancer_network_load_balancer.main.ip_addresses[0].ip_address}/health"
 }
 
-output "container_instance_id" {
-  description = "OCID of the container instance"
-  value       = oci_container_instances_container_instance.get_ip.id
+output "instance_id" {
+  description = "OCID of the VM running the container"
+  value       = oci_core_instance.get_ip.id
 }
 
 output "log_group_id" {
